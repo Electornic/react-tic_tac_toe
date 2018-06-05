@@ -50,10 +50,7 @@ ul {
 .game-info {
   margin-left: 20px;
 }
-.button {
-  margin-bottom: 5px;
-}
-.button:active {
+.bold {
   cursor: pointer;
   font-weight: bold;
   color: blue;

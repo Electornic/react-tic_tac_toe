@@ -3,23 +3,16 @@ import ReactDOM from "react-dom";
 import "./index.css";
 
 function Square(props) {
-  if (props.highlight) {
-    return (
-      <button
-        className="square"
-        style={{ color: "blue" }}
-        onClick={props.onClick}
-      >
-        {props.value}
-      </button>
-    );
-  } else {
-    return (
-      <button className="square" onClick={props.onClick}>
-        {props.value}
-      </button>
-    );
+  let highlightColor;
+  if(props.highlight){
+    highlightColor = {color: "blue"};
   }
+  return (
+    <button className="square" style={highlightColor} onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
+  
 }
 
 class Board extends React.Component {
@@ -125,10 +118,10 @@ class Game extends React.Component {
       const desc = move
         ? "Go to move #" + move + " (" + row + "," + col + ") "
         : "Go to game start";
-
+      let bold = (move === this.state.stepNumber) ? "bold" : "";
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)} className="button">
+          <button onClick={() => this.jumpTo(move)} className={bold}>
             {desc}
           </button>
         </li>
@@ -137,8 +130,8 @@ class Game extends React.Component {
 
     let status;
     if (winner && winner !== "Draw") {
-      status = "Winner: " + winner[0];
-      winlog = winner[1];
+      status = "Winner: " + winner.winner;
+      winlog = winner.winnerLine;
     } else if (winner && winner === "Draw") {
       status = winner;
     } else {
@@ -188,7 +181,10 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return [squares[a], lines[i]];
+      return {
+        winner: squares[a],
+        winnerLine: lines[i]
+      };
     } else if (!squares.includes(null)) {
       return "Draw";
     }
