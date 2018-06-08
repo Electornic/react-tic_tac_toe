@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
+import _ from "lodash";
 
 function Square(props) {
   let highlightColor;
@@ -18,7 +19,7 @@ function Square(props) {
 class Board extends React.Component {
   renderSquare(i, row, col) {
     let won = false;
-    if (this.props.winlog && this.props.winlog.indexOf(i) >= 0) {
+    if (this.props.winlog && _.indexOf(this.props.winlog, i) >= 0) {
       won = true;
     }
 
@@ -59,7 +60,7 @@ class Game extends React.Component {
     this.state = {
       history: [
         {
-          squares: Array(9).fill(null)
+          squares: _.fill(Array(9), null)
         }
       ],
       stepNumber: 0,
@@ -70,20 +71,18 @@ class Game extends React.Component {
   }
 
   handleClick(i, row, col) {
-    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    const history = _.slice(this.state.history, 0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
-    const squares = current.squares.slice();
+    const squares = _.slice(current.squares);
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
     squares[i] = this.state.xIsNext ? "X" : "O";
     this.setState({
-      history: history.concat([
-        {
+      history: _.concat(history, {
           squares: squares,
           clicked: [row, col]
-        }
-      ]),
+      }),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext
     });
@@ -118,7 +117,7 @@ class Game extends React.Component {
       const desc = move
         ? "Go to move #" + move + " (" + row + "," + col + ") "
         : "Go to game start";
-      let bold = (move === this.state.stepNumber) ? "bold" : "";
+      let bold = (move === this.state.stepNumber) ? "bold" : ""; //move가 현재 처리되고 있는 요소의 값을 말하니까 그거랑 history 배열 사이즈와 비교해서 같으면 진한글씨체로 바꿔준다. 
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)} className={bold}>
@@ -185,7 +184,7 @@ function calculateWinner(squares) {
         winner: squares[a],
         winnerLine: lines[i]
       };
-    } else if (!squares.includes(null)) {
+    } else if (!_.includes(squares, null)) {
       return "Draw";
     }
   }
